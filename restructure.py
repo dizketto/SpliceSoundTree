@@ -46,13 +46,13 @@ def determine_genre(sample: Samples):
 
 def determine_instrument_by_tag_map(sample: Samples, map):
     for inst in map:
-        if inst in sample.tag_list:
+        if inst.replace(" ","") in [tag.replace(" ","") for tag in sample.tag_list]:
             return inst
     return "uncategorized"
 
 def determine_instrument_by_name_map(sample: Samples, map):
     for inst in map:
-        if inst.lower() in sample.filename.lower():
+        if inst.lower().replace(" ","") in sample.filename.lower().replace(" ",""):
             return inst
 
 def is_tonal(sample: Samples):
@@ -74,17 +74,13 @@ def determine_instrument(sample: Samples, category: SampleCategory):
 def add_to_drums_tree(sample: Samples):
     determined_path = [OUTPUTDIR]
 
-    if is_tonal(sample):
+    if is_tonal(sample) or sample.is_tagged_as("handpan") or "handpan" in sample.filename:
         return None
     
     if not sample.tag_list.intersection({"drums", "percussion", "snares", "kicks", "rims", "hats", "crash", "fills"}):
         return None
     
-    if "percussion" in sample.tags and not sample.is_drumnbass() and (
-        not sample.is_tagged_as("handpan")
-    ) and (
-        not sample.is_tagged_as("hand pan")
-    ):
+    if "percussion" in sample.tags and not sample.is_drumnbass():
          determined_path.append("Percussions")
 
     elif sample.tag_list.intersection(DRUMS_SAFESET) != set():
@@ -107,7 +103,7 @@ def add_to_drums_tree(sample: Samples):
 
     directory = "/".join(determined_path)
 
-    # print(f"+ {directory}/{sample.filename}")
+    print(f"+ {i+1}/{len(db_data)}: {sample.filename}")
     return directory
 
 
@@ -121,30 +117,21 @@ def add_to_chromatic_tree(sample: Samples):
     genre = determine_genre(sample)
     determined_path.append(genre)
     directory = "/".join(determined_path)
-    print(f"+ {directory}/{sample.filename}")
+    print(f"+ {i+1}/{len(db_data)}: {sample.filename}")
     return directory
               
-
-# connection = sqlite3.connect("sounds.db")
-# cur = connection.cursor()
-# res = cur.execute("select * from samples join packs on packs.uuid = samples.pack_uuid limit 1")
-# samples_list = cur.fetchall()
-# for sample in samples_list:
-#     print(sample)
 
 engine=sqlalchemy.create_engine('sqlite:///sounds.db')
 
 def scan_whole_db(session):
-
-    stmt = select(Samples) #.where(Samples.sample_type == "oneshot") #.where(Samples.tags.like("%open%"))
-    db_data = session.scalars(stmt).all() #.fetchmany(50)
-    # print(db_data.sample_type)
+    stmt = select(Samples) 
+    db_data = session.scalars(stmt).all()
     return db_data
 
 with Session(engine) as session:    
     db_data = scan_whole_db(session)
 
-    for sample in db_data:
+    for i, sample in enumerate(db_data):
         directory = add_to_drums_tree(sample)
 
         if not directory:
@@ -153,6 +140,7 @@ with Session(engine) as session:
         if directory:
             """ save the file """
             os.makedirs(directory, exist_ok=True)
-            os.system(f"touch '{directory}/{sample.filename}'")
-            
-            # copy2(sample.local_path, f"{directory}/{sample.filename}")
+            try:
+                copy2(sample.local_path, f"{directory}/{sample.filename}")
+            except Exception as e:
+                os.system(f"echo 'Error: {sample.filename} - {str(e)}' >> error.log")

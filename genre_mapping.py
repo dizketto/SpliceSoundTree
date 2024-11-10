@@ -47,7 +47,7 @@ SUB_GENRE_MAP = {
     "dub": "reggaedub",
     "cumbia": "latin american",
     "afro latin": "latin american",
-    "caribbean": "latin american",
+    "caribbean": "caribbean",
     "jump up dnb": "drum and bass",
     "dubstep": "dubstep",
     "trap edm": "trap",

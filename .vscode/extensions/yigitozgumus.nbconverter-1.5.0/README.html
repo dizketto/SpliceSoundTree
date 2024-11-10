@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Converted from: README.md</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+<body>
+
+<h1 id="heading.nbconverter">NbConverter</h1>
+<p>This extension will convert any python file made on the spyder to a ready to work notebook file</p>
+<h2 id="heading.quick-start">Quick Start</h2>
+<ul>
+<li>Install the extension</li>
+<li>You are ready to use it</li>
+</ul>
+<h2 id="heading.example-usage">Example Usage</h2>
+<p>The extension is written to conveniently convert your sectioned python file to jupyter notebook<br />
+You can either use “”&quot; to describe a markdown cell like shown below, or use the seperator to divide the cells.<br />
+There is two possible way to use seperator. If it is used with descriptive line, it will create a markdown cell<br />
+and add this line as a header. If it is used alone it will divide the code block between two code cells.</p>
+<p>Below you can see an example python code and its converted Jupter notebook counterpart.</p>
+<pre><code class="language-python">
+#%% This is a test
+&quot;&quot;&quot;
+This will be another comment line 
+for the testing of the different sections
+&quot;&quot;&quot;
+import numpy as np
+a = np.array([[1,1]])
+# one line comment test
+print(a.shape)
+print(a)
+&quot;&quot;&quot; this is a test
+comment for the multi
+line command block&quot;&quot;&quot;
+#%% This is the second cell
+b = 6
+#%%
+# seperators without lines divide the code between cells. Code cell by default
+import matplotlib.pyplot all_plt
+x = np.array([1,2,3,4,5])
+y = np.array([4,5,6,7,8])
+#%%
+plt(x,y)
+plt.show()
+# One line comment
+print (a + b)
+&quot;&quot;&quot;
+## This will be the markdown page 
+**This will be rendered as bold text**
+_This will be rendered as italic_
+|cell type|progress|
+|-----|-----|
+|code| done|
+|markdown| done|
+&quot;&quot;&quot;
+
+</code></pre>
+<p><img src="https://imgur.com/a/k3aX8" alt="" /></p>
+<h2 id="heading.next-tasks">Next Tasks</h2>
+<ul>
+<li>Making the converter robust</li>
+<li>Being able to convert py files that is converted from ipynb notebooks</li>
+<li>More comprehensive conversion logic</li>
+</ul>
+
+
+</body>
+</html>

@@ -74,12 +74,13 @@ class Samples(Base):
 
     pack: Mapped['Packs'] = relationship('Packs', back_populates='samples')
 
-    def is_not_tagged_as(self, tag):
-        return tag in self.tags.split(",")
+    def is_tagged_as(self, tag):
+        return tag in self.tag_list
     
     def is_drumnbass(self):
-     return "drum and bass" in self.tags.split(",")
+     return "drum and bass" in self.tag_list
 
     @property
     def tag_list(self):
         return set(self.tags.split(","))
+    
